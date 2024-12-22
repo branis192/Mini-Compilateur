@@ -1,0 +1,1171 @@
+   0  $accept : %entry% $end
+
+   1  program : INT DIMENSIONS OF config END opt_statements EOF
+
+   2  config : INT DOT_DOT INT
+   3         | fields
+
+   4  fields : field
+   5         | fields COMMA field
+
+   6  field : ID OF INT DOT_DOT INT
+
+   7  cond : aux_cond1
+   8       | cond OR aux_cond1
+
+   9  aux_cond1 : aux_cond
+  10            | aux_cond AND aux_cond1
+
+  11  aux_cond : expression EQ expression
+  12           | expression GE expression
+  13           | expression GT expression
+  14           | expression LT expression
+  15           | expression LE expression
+  16           | expression NE expression
+  17           | NOT aux_cond
+  18           | LPAR cond RPAR
+
+  19  opt_statements : statement
+  20                 | opt_statements statement
+
+  21  statement : cell ASSIGN expression
+  22            | ID ASSIGN expression
+  23            | IF cond THEN opt_statements END
+  24            | IF cond THEN opt_statements ELSE opt_statements END
+  25            | IF cond THEN opt_statements ELSIF cond THEN opt_statements END
+
+  26  cell : LBRACKET INT COMMA INT RBRACKET
+
+  27  expression : f
+  28             | expression PLUS f
+  29             | expression MOINS f
+
+  30  f : t
+  31    | f MULT t
+  32    | f DIV t
+  33    | f MOD t
+
+  34  t : cell
+  35    | INT
+  36    | ID
+  37    | LPAR expression RPAR
+  38    | PLUS t
+  39    | MOINS t
+
+  40  %entry% : '\001' program
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . program  (40)
+
+	INT  shift 3
+	.  error
+
+	program  goto 4
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	program : INT . DIMENSIONS OF config END opt_statements EOF  (1)
+
+	DIMENSIONS  shift 5
+	.  error
+
+
+state 4
+	%entry% : '\001' program .  (40)
+
+	.  reduce 40
+
+
+state 5
+	program : INT DIMENSIONS . OF config END opt_statements EOF  (1)
+
+	OF  shift 6
+	.  error
+
+
+state 6
+	program : INT DIMENSIONS OF . config END opt_statements EOF  (1)
+
+	ID  shift 7
+	INT  shift 8
+	.  error
+
+	config  goto 9
+	fields  goto 10
+	field  goto 11
+
+
+state 7
+	field : ID . OF INT DOT_DOT INT  (6)
+
+	OF  shift 12
+	.  error
+
+
+state 8
+	config : INT . DOT_DOT INT  (2)
+
+	DOT_DOT  shift 13
+	.  error
+
+
+state 9
+	program : INT DIMENSIONS OF config . END opt_statements EOF  (1)
+
+	END  shift 14
+	.  error
+
+
+state 10
+	config : fields .  (3)
+	fields : fields . COMMA field  (5)
+
+	COMMA  shift 15
+	END  reduce 3
+
+
+state 11
+	fields : field .  (4)
+
+	.  reduce 4
+
+
+state 12
+	field : ID OF . INT DOT_DOT INT  (6)
+
+	INT  shift 16
+	.  error
+
+
+state 13
+	config : INT DOT_DOT . INT  (2)
+
+	INT  shift 17
+	.  error
+
+
+state 14
+	program : INT DIMENSIONS OF config END . opt_statements EOF  (1)
+
+	LBRACKET  shift 18
+	IF  shift 19
+	ID  shift 20
+	.  error
+
+	opt_statements  goto 21
+	statement  goto 22
+	cell  goto 23
+
+
+state 15
+	fields : fields COMMA . field  (5)
+
+	ID  shift 7
+	.  error
+
+	field  goto 24
+
+
+state 16
+	field : ID OF INT . DOT_DOT INT  (6)
+
+	DOT_DOT  shift 25
+	.  error
+
+
+state 17
+	config : INT DOT_DOT INT .  (2)
+
+	.  reduce 2
+
+
+state 18
+	cell : LBRACKET . INT COMMA INT RBRACKET  (26)
+
+	INT  shift 26
+	.  error
+
+
+state 19
+	statement : IF . cond THEN opt_statements END  (23)
+	statement : IF . cond THEN opt_statements ELSE opt_statements END  (24)
+	statement : IF . cond THEN opt_statements ELSIF cond THEN opt_statements END  (25)
+
+	LBRACKET  shift 18
+	LPAR  shift 27
+	PLUS  shift 28
+	MOINS  shift 29
+	NOT  shift 30
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cond  goto 33
+	aux_cond1  goto 34
+	aux_cond  goto 35
+	expression  goto 36
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 20
+	statement : ID . ASSIGN expression  (22)
+
+	ASSIGN  shift 40
+	.  error
+
+
+state 21
+	program : INT DIMENSIONS OF config END opt_statements . EOF  (1)
+	opt_statements : opt_statements . statement  (20)
+
+	EOF  shift 41
+	LBRACKET  shift 18
+	IF  shift 19
+	ID  shift 20
+	.  error
+
+	statement  goto 42
+	cell  goto 23
+
+
+state 22
+	opt_statements : statement .  (19)
+
+	.  reduce 19
+
+
+state 23
+	statement : cell . ASSIGN expression  (21)
+
+	ASSIGN  shift 43
+	.  error
+
+
+state 24
+	fields : fields COMMA field .  (5)
+
+	.  reduce 5
+
+
+state 25
+	field : ID OF INT DOT_DOT . INT  (6)
+
+	INT  shift 44
+	.  error
+
+
+state 26
+	cell : LBRACKET INT . COMMA INT RBRACKET  (26)
+
+	COMMA  shift 45
+	.  error
+
+
+state 27
+	aux_cond : LPAR . cond RPAR  (18)
+	t : LPAR . expression RPAR  (37)
+
+	LBRACKET  shift 18
+	LPAR  shift 27
+	PLUS  shift 28
+	MOINS  shift 29
+	NOT  shift 30
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cond  goto 46
+	aux_cond1  goto 34
+	aux_cond  goto 35
+	expression  goto 47
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 28
+	t : PLUS . t  (38)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cell  goto 37
+	t  goto 49
+
+
+state 29
+	t : MOINS . t  (39)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cell  goto 37
+	t  goto 50
+
+
+state 30
+	aux_cond : NOT . aux_cond  (17)
+
+	LBRACKET  shift 18
+	LPAR  shift 27
+	PLUS  shift 28
+	MOINS  shift 29
+	NOT  shift 30
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	aux_cond  goto 51
+	expression  goto 36
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 31
+	t : ID .  (36)
+
+	.  reduce 36
+
+
+state 32
+	t : INT .  (35)
+
+	.  reduce 35
+
+
+state 33
+	cond : cond . OR aux_cond1  (8)
+	statement : IF cond . THEN opt_statements END  (23)
+	statement : IF cond . THEN opt_statements ELSE opt_statements END  (24)
+	statement : IF cond . THEN opt_statements ELSIF cond THEN opt_statements END  (25)
+
+	THEN  shift 52
+	OR  shift 53
+	.  error
+
+
+state 34
+	cond : aux_cond1 .  (7)
+
+	.  reduce 7
+
+
+state 35
+	aux_cond1 : aux_cond .  (9)
+	aux_cond1 : aux_cond . AND aux_cond1  (10)
+
+	AND  shift 54
+	RPAR  reduce 9
+	THEN  reduce 9
+	OR  reduce 9
+
+
+state 36
+	aux_cond : expression . EQ expression  (11)
+	aux_cond : expression . GE expression  (12)
+	aux_cond : expression . GT expression  (13)
+	aux_cond : expression . LT expression  (14)
+	aux_cond : expression . LE expression  (15)
+	aux_cond : expression . NE expression  (16)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	GT  shift 57
+	GE  shift 58
+	LT  shift 59
+	LE  shift 60
+	EQ  shift 61
+	NE  shift 62
+	.  error
+
+
+state 37
+	t : cell .  (34)
+
+	.  reduce 34
+
+
+state 38
+	expression : f .  (27)
+	f : f . MULT t  (31)
+	f : f . DIV t  (32)
+	f : f . MOD t  (33)
+
+	MULT  shift 63
+	MOD  shift 64
+	DIV  shift 65
+	EOF  reduce 27
+	END  reduce 27
+	LBRACKET  reduce 27
+	RPAR  reduce 27
+	PLUS  reduce 27
+	MOINS  reduce 27
+	IF  reduce 27
+	THEN  reduce 27
+	ELSE  reduce 27
+	ELSIF  reduce 27
+	GT  reduce 27
+	GE  reduce 27
+	LT  reduce 27
+	LE  reduce 27
+	EQ  reduce 27
+	NE  reduce 27
+	OR  reduce 27
+	AND  reduce 27
+	ID  reduce 27
+
+
+state 39
+	f : t .  (30)
+
+	.  reduce 30
+
+
+state 40
+	statement : ID ASSIGN . expression  (22)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 66
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 41
+	program : INT DIMENSIONS OF config END opt_statements EOF .  (1)
+
+	.  reduce 1
+
+
+state 42
+	opt_statements : opt_statements statement .  (20)
+
+	.  reduce 20
+
+
+state 43
+	statement : cell ASSIGN . expression  (21)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 67
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 44
+	field : ID OF INT DOT_DOT INT .  (6)
+
+	.  reduce 6
+
+
+state 45
+	cell : LBRACKET INT COMMA . INT RBRACKET  (26)
+
+	INT  shift 68
+	.  error
+
+
+state 46
+	cond : cond . OR aux_cond1  (8)
+	aux_cond : LPAR cond . RPAR  (18)
+
+	RPAR  shift 69
+	OR  shift 53
+	.  error
+
+
+state 47
+	aux_cond : expression . EQ expression  (11)
+	aux_cond : expression . GE expression  (12)
+	aux_cond : expression . GT expression  (13)
+	aux_cond : expression . LT expression  (14)
+	aux_cond : expression . LE expression  (15)
+	aux_cond : expression . NE expression  (16)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+	t : LPAR expression . RPAR  (37)
+
+	RPAR  shift 70
+	PLUS  shift 55
+	MOINS  shift 56
+	GT  shift 57
+	GE  shift 58
+	LT  shift 59
+	LE  shift 60
+	EQ  shift 61
+	NE  shift 62
+	.  error
+
+
+state 48
+	t : LPAR . expression RPAR  (37)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 71
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 49
+	t : PLUS t .  (38)
+
+	.  reduce 38
+
+
+state 50
+	t : MOINS t .  (39)
+
+	.  reduce 39
+
+
+state 51
+	aux_cond : NOT aux_cond .  (17)
+
+	.  reduce 17
+
+
+state 52
+	statement : IF cond THEN . opt_statements END  (23)
+	statement : IF cond THEN . opt_statements ELSE opt_statements END  (24)
+	statement : IF cond THEN . opt_statements ELSIF cond THEN opt_statements END  (25)
+
+	LBRACKET  shift 18
+	IF  shift 19
+	ID  shift 20
+	.  error
+
+	opt_statements  goto 72
+	statement  goto 22
+	cell  goto 23
+
+
+state 53
+	cond : cond OR . aux_cond1  (8)
+
+	LBRACKET  shift 18
+	LPAR  shift 27
+	PLUS  shift 28
+	MOINS  shift 29
+	NOT  shift 30
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	aux_cond1  goto 73
+	aux_cond  goto 35
+	expression  goto 36
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 54
+	aux_cond1 : aux_cond AND . aux_cond1  (10)
+
+	LBRACKET  shift 18
+	LPAR  shift 27
+	PLUS  shift 28
+	MOINS  shift 29
+	NOT  shift 30
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	aux_cond1  goto 74
+	aux_cond  goto 35
+	expression  goto 36
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 55
+	expression : expression PLUS . f  (28)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cell  goto 37
+	f  goto 75
+	t  goto 39
+
+
+state 56
+	expression : expression MOINS . f  (29)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cell  goto 37
+	f  goto 76
+	t  goto 39
+
+
+state 57
+	aux_cond : expression GT . expression  (13)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 77
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 58
+	aux_cond : expression GE . expression  (12)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 78
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 59
+	aux_cond : expression LT . expression  (14)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 79
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 60
+	aux_cond : expression LE . expression  (15)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 80
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 61
+	aux_cond : expression EQ . expression  (11)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 81
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 62
+	aux_cond : expression NE . expression  (16)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	expression  goto 82
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 63
+	f : f MULT . t  (31)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cell  goto 37
+	t  goto 83
+
+
+state 64
+	f : f MOD . t  (33)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cell  goto 37
+	t  goto 84
+
+
+state 65
+	f : f DIV . t  (32)
+
+	LBRACKET  shift 18
+	LPAR  shift 48
+	PLUS  shift 28
+	MOINS  shift 29
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cell  goto 37
+	t  goto 85
+
+
+state 66
+	statement : ID ASSIGN expression .  (22)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	EOF  reduce 22
+	END  reduce 22
+	LBRACKET  reduce 22
+	IF  reduce 22
+	ELSE  reduce 22
+	ELSIF  reduce 22
+	ID  reduce 22
+
+
+state 67
+	statement : cell ASSIGN expression .  (21)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	EOF  reduce 21
+	END  reduce 21
+	LBRACKET  reduce 21
+	IF  reduce 21
+	ELSE  reduce 21
+	ELSIF  reduce 21
+	ID  reduce 21
+
+
+state 68
+	cell : LBRACKET INT COMMA INT . RBRACKET  (26)
+
+	RBRACKET  shift 86
+	.  error
+
+
+state 69
+	aux_cond : LPAR cond RPAR .  (18)
+
+	.  reduce 18
+
+
+state 70
+	t : LPAR expression RPAR .  (37)
+
+	.  reduce 37
+
+
+state 71
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+	t : LPAR expression . RPAR  (37)
+
+	RPAR  shift 70
+	PLUS  shift 55
+	MOINS  shift 56
+	.  error
+
+
+state 72
+	opt_statements : opt_statements . statement  (20)
+	statement : IF cond THEN opt_statements . END  (23)
+	statement : IF cond THEN opt_statements . ELSE opt_statements END  (24)
+	statement : IF cond THEN opt_statements . ELSIF cond THEN opt_statements END  (25)
+
+	END  shift 87
+	LBRACKET  shift 18
+	IF  shift 19
+	ELSE  shift 88
+	ELSIF  shift 89
+	ID  shift 20
+	.  error
+
+	statement  goto 42
+	cell  goto 23
+
+
+state 73
+	cond : cond OR aux_cond1 .  (8)
+
+	.  reduce 8
+
+
+state 74
+	aux_cond1 : aux_cond AND aux_cond1 .  (10)
+
+	.  reduce 10
+
+
+state 75
+	expression : expression PLUS f .  (28)
+	f : f . MULT t  (31)
+	f : f . DIV t  (32)
+	f : f . MOD t  (33)
+
+	MULT  shift 63
+	MOD  shift 64
+	DIV  shift 65
+	EOF  reduce 28
+	END  reduce 28
+	LBRACKET  reduce 28
+	RPAR  reduce 28
+	PLUS  reduce 28
+	MOINS  reduce 28
+	IF  reduce 28
+	THEN  reduce 28
+	ELSE  reduce 28
+	ELSIF  reduce 28
+	GT  reduce 28
+	GE  reduce 28
+	LT  reduce 28
+	LE  reduce 28
+	EQ  reduce 28
+	NE  reduce 28
+	OR  reduce 28
+	AND  reduce 28
+	ID  reduce 28
+
+
+state 76
+	expression : expression MOINS f .  (29)
+	f : f . MULT t  (31)
+	f : f . DIV t  (32)
+	f : f . MOD t  (33)
+
+	MULT  shift 63
+	MOD  shift 64
+	DIV  shift 65
+	EOF  reduce 29
+	END  reduce 29
+	LBRACKET  reduce 29
+	RPAR  reduce 29
+	PLUS  reduce 29
+	MOINS  reduce 29
+	IF  reduce 29
+	THEN  reduce 29
+	ELSE  reduce 29
+	ELSIF  reduce 29
+	GT  reduce 29
+	GE  reduce 29
+	LT  reduce 29
+	LE  reduce 29
+	EQ  reduce 29
+	NE  reduce 29
+	OR  reduce 29
+	AND  reduce 29
+	ID  reduce 29
+
+
+state 77
+	aux_cond : expression GT expression .  (13)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	RPAR  reduce 13
+	THEN  reduce 13
+	OR  reduce 13
+	AND  reduce 13
+
+
+state 78
+	aux_cond : expression GE expression .  (12)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	RPAR  reduce 12
+	THEN  reduce 12
+	OR  reduce 12
+	AND  reduce 12
+
+
+state 79
+	aux_cond : expression LT expression .  (14)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	RPAR  reduce 14
+	THEN  reduce 14
+	OR  reduce 14
+	AND  reduce 14
+
+
+state 80
+	aux_cond : expression LE expression .  (15)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	RPAR  reduce 15
+	THEN  reduce 15
+	OR  reduce 15
+	AND  reduce 15
+
+
+state 81
+	aux_cond : expression EQ expression .  (11)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	RPAR  reduce 11
+	THEN  reduce 11
+	OR  reduce 11
+	AND  reduce 11
+
+
+state 82
+	aux_cond : expression NE expression .  (16)
+	expression : expression . PLUS f  (28)
+	expression : expression . MOINS f  (29)
+
+	PLUS  shift 55
+	MOINS  shift 56
+	RPAR  reduce 16
+	THEN  reduce 16
+	OR  reduce 16
+	AND  reduce 16
+
+
+state 83
+	f : f MULT t .  (31)
+
+	.  reduce 31
+
+
+state 84
+	f : f MOD t .  (33)
+
+	.  reduce 33
+
+
+state 85
+	f : f DIV t .  (32)
+
+	.  reduce 32
+
+
+state 86
+	cell : LBRACKET INT COMMA INT RBRACKET .  (26)
+
+	.  reduce 26
+
+
+state 87
+	statement : IF cond THEN opt_statements END .  (23)
+
+	.  reduce 23
+
+
+state 88
+	statement : IF cond THEN opt_statements ELSE . opt_statements END  (24)
+
+	LBRACKET  shift 18
+	IF  shift 19
+	ID  shift 20
+	.  error
+
+	opt_statements  goto 90
+	statement  goto 22
+	cell  goto 23
+
+
+state 89
+	statement : IF cond THEN opt_statements ELSIF . cond THEN opt_statements END  (25)
+
+	LBRACKET  shift 18
+	LPAR  shift 27
+	PLUS  shift 28
+	MOINS  shift 29
+	NOT  shift 30
+	ID  shift 31
+	INT  shift 32
+	.  error
+
+	cond  goto 91
+	aux_cond1  goto 34
+	aux_cond  goto 35
+	expression  goto 36
+	cell  goto 37
+	f  goto 38
+	t  goto 39
+
+
+state 90
+	opt_statements : opt_statements . statement  (20)
+	statement : IF cond THEN opt_statements ELSE opt_statements . END  (24)
+
+	END  shift 92
+	LBRACKET  shift 18
+	IF  shift 19
+	ID  shift 20
+	.  error
+
+	statement  goto 42
+	cell  goto 23
+
+
+state 91
+	cond : cond . OR aux_cond1  (8)
+	statement : IF cond THEN opt_statements ELSIF cond . THEN opt_statements END  (25)
+
+	THEN  shift 93
+	OR  shift 53
+	.  error
+
+
+state 92
+	statement : IF cond THEN opt_statements ELSE opt_statements END .  (24)
+
+	.  reduce 24
+
+
+state 93
+	statement : IF cond THEN opt_statements ELSIF cond THEN . opt_statements END  (25)
+
+	LBRACKET  shift 18
+	IF  shift 19
+	ID  shift 20
+	.  error
+
+	opt_statements  goto 94
+	statement  goto 22
+	cell  goto 23
+
+
+state 94
+	opt_statements : opt_statements . statement  (20)
+	statement : IF cond THEN opt_statements ELSIF cond THEN opt_statements . END  (25)
+
+	END  shift 95
+	LBRACKET  shift 18
+	IF  shift 19
+	ID  shift 20
+	.  error
+
+	statement  goto 42
+	cell  goto 23
+
+
+state 95
+	statement : IF cond THEN opt_statements ELSIF cond THEN opt_statements END .  (25)
+
+	.  reduce 25
+
+
+36 terminals, 15 nonterminals
+41 grammar rules, 96 states
